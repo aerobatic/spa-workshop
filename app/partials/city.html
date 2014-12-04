@@ -1,7 +1,21 @@
 <h1>{{this.cityName}}</h1>
 
 <h3>Forecast</h3>
-<div>{{this.forecast | json}}</div>
+<ul>
+<li class="wkHead">Weekly Summary: {{this.forecast.daily.summary | json}}</li>
+</ul>
+<ul id="wkSummary" class="wkList col span_3_of_3" data-ng-repeat="daily in this.forecast">
+  <li>Daily Time: {{this.forecast.daily.data[0].time | json}}</li>
+  <li>Daily Summary: {{this.forecast.daily.data[0].summary | json}}</li>
+  <li>Daily Min Temp: {{this.forecast.daily.data[0].temperatureMin | json}}</li>
+  <li>Daily Max Temp: {{this.forecast.daily.data[0].temperatureMax | json}}</li>
+  <br><br>
+</ul>
 
 <h3>News</h3>
-<div>{{this.news | json}}</div>
+<ul data-ng-repeat='title in this.news'>
+  <br>
+  <li>{{title.title}}</li>
+  <a href={{title.href}}>{{title.href}}</a>
+  <br>
+</ul>
