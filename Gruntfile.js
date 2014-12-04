@@ -10,7 +10,14 @@ module.exports = function(grunt) {
     uglify: {
       build: {
         files: {
-          'dist/app.min.js': ['tmp/templates.js', 'tmp/annotated.js']
+          'dist/app.min.js': ['tmp/templates.js', 'tmp/annotated.js', 'tmp/lib.js']
+        }
+      }
+    },
+    sass: {
+      dist: {
+        files: {
+          'app/css/styles.css': 'app/scss/style.scss'
         }
       }
     },
@@ -30,8 +37,8 @@ module.exports = function(grunt) {
     },
     html2js: {
       // Compile partial views into an angular module called 'templates' (name is important).
-      // In debug mode template files are loaded directly via XHR. In release builds the 
-      // tmp/templates.js file should be included in the app.min.js script. Templates will be 
+      // In debug mode template files are loaded directly via XHR. In release builds the
+      // tmp/templates.js file should be included in the app.min.js script. Templates will be
       // preloaded in the $templateCache avoiding additional network round trips.
       options: {
         base: 'app',
@@ -59,7 +66,19 @@ module.exports = function(grunt) {
         dest: 'dist/vendor.min.js',
       }
     },
+
     clean: ['dist', 'tmp'],
+
+    browserify: {
+      dev: {
+        src: ['lib/**/*.js'],
+        dest: 'tmp/lib.js',
+        options: {
+          transform: ['debowerify']
+        }
+      }
+    },
+
     // See https://github.com/karma-runner/grunt-karma for more options
     karma: {
       options: {
@@ -86,14 +105,17 @@ module.exports = function(grunt) {
   });
 
   // Specify the sync arg to avoid blocking the watch
-  grunt.registerTask('build', ['clean', 'jshint', 'html2js', 'cssmin', 'ngAnnotate', 'uglify', 'concat', 'copy:dist']);
+  grunt.registerTask('style', ['sass']);
+  grunt.registerTask('build', ['clean', 'jshint', 'html2js', 'cssmin', 'ngAnnotate', 'browserify:dev', 'uglify', 'concat', 'copy:dist']);
   grunt.registerTask('test', ['karma']);
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-html2js');
   grunt.loadNpmTasks('grunt-ng-annotate');
